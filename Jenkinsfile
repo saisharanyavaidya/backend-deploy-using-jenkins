@@ -12,12 +12,30 @@ pipeline {
         def nexusUrl = 'nexus.avyan.site:8081'
     }
     parameters {
-        string(name: 'appVersion', defaultValue: '1.0.0', description: 'What is the application version?')
+        string(name: 'appVersion', defaultValue: '1.0.0', description: 'What is the application version?') // these values we get from backend-using-jenkins project
     }
     stages {
         stage('print the version') {
             steps {
                 echo "${params.appVersion}"
+            }
+        }
+        stage('Init') {
+            steps {
+                sh """
+                    cd terraform
+                    terraform init
+
+                """
+            }
+        }
+        stage('Plan') {
+            steps {
+                sh """
+                    cd terraform
+                    terraform plan -var="app_version=${params.appVersion}"
+
+                """
             }
         }
         
