@@ -9,7 +9,6 @@ pipeline {
     }
     environment {
         def appVersion = '' //declare global variable here so that this can be used across all stages
-        def nexusUrl = 'nexus.avyan.site:8081'
     }
     parameters {
         string(name: 'appVersion', defaultValue: '1.0.0', description: 'What is the application version?') // these values we get from backend-using-jenkins project
@@ -32,9 +31,19 @@ pipeline {
         stage('Plan') {
             steps {
                 sh """
+                    pwd
                     cd terraform
                     terraform plan -var="app_version=${params.appVersion}"
 
+                """
+            }
+        }
+        stage('Deploy') {
+            steps {
+                sh """
+                    pwd
+                    cd terraform
+                    terraform apply -auto-approve -var="app_version=${params.appVersion}"
                 """
             }
         }
